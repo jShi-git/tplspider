@@ -1,9 +1,13 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"github.com/lealife/leacrawler"
 	"github.com/lxn/walk"
 	. "github.com/lxn/walk/declarative"
+	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -17,10 +21,10 @@ func getTemplate(url string, customPath string) {
 }
 
 func main() {
-	//var outTE *walk.TextEdit
 	var le, le2 *walk.LineEdit
 	var lb1, lb2 *walk.Label
 	copytext, _ := walk.Clipboard().Text()
+
 	MainWindow{
 		Title:   "模板下载器",
 		MinSize: Size{400, 100},
@@ -42,13 +46,29 @@ func main() {
 				AssignTo: &le2,
 				Text:     `D:\APMServ5.2.6\www\htdocs\down\tpls\`,
 			},
-			//TextEdit{
-			//	AssignTo: &outTE,
-			//},
 			PushButton{
 				Text: "开始抓取",
 				OnClicked: func() {
-					//outTE.SetText(strings.ToUpper(inTE.Text()))
+					command := flag.String("cmd", "phantomjs", "Set the command.")
+					patharr := strings.Split(le2.Text(), "\\\\")
+					args := flag.String("args", "rasterize.js "+le.Text()+" "+patharr[len(patharr)-1]+".png", "Set the args. (separated by spaces)")
+					var argArray []string
+					if *args != "" {
+						argArray = strings.Split(*args, " ")
+					} else {
+						argArray = make([]string, 0)
+					}
+
+					flag.Parse()
+					cmd := exec.Command(*command, argArray...)
+
+					buf, err := cmd.Output()
+					if err != nil {
+						fmt.Fprintf(os.Stderr, "The command failed to perform: %s (Command: %s, Arguments: %s)", err, *command, *args)
+						return
+					}
+					fmt.Fprintf(os.Stdout, "Result: %s", buf)
+
 					getTemplate(le.Text(), le2.Text())
 				},
 			},
