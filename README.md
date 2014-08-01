@@ -12,3 +12,5 @@ so easy~~
 
 ##运行截图
 ![运行界面](assets/help.png)
+
+![爬取结果](assets/result.png)
