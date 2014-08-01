@@ -10,6 +10,9 @@
 
 so easy~~
 
+#TODO
+> 使用phantomjs，生成被抓网页的截图
+
 ##运行截图
 ![运行界面](assets/help.png)
 
