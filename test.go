@@ -23,6 +23,7 @@ func getTemplate(url string, customPath string) {
 func main() {
 	var le, le2 *walk.LineEdit
 	var lb1, lb2 *walk.Label
+	var ck1 *walk.CheckBox
 	copytext, _ := walk.Clipboard().Text()
 
 	MainWindow{
@@ -30,6 +31,12 @@ func main() {
 		MinSize: Size{400, 100},
 		Layout:  VBox{},
 		Children: []Widget{
+			CheckBox{
+				AssignTo: &ck1,
+				Name:     "cksnap",
+				Text:     "带截图抓取",
+				Checked:  false,
+			},
 			Label{
 				AssignTo: &lb1,
 				Text:     "网址",
@@ -49,26 +56,29 @@ func main() {
 			PushButton{
 				Text: "开始抓取",
 				OnClicked: func() {
-					command := flag.String("cmd", "phantomjs", "Set the command.")
-					patharr := strings.Split(le2.Text(), "\\\\")
-					args := flag.String("args", "rasterize.js "+le.Text()+" "+patharr[len(patharr)-1]+".png", "Set the args. (separated by spaces)")
-					var argArray []string
-					if *args != "" {
-						argArray = strings.Split(*args, " ")
-					} else {
-						argArray = make([]string, 0)
+					fmt.Println(ck1.Checked())
+					if ck1.Checked() {
+						command := flag.String("cmd", "phantomjs", "Set the command.")
+						patharr := strings.Split(le2.Text(), "\\\\")
+						args := flag.String("args", "rasterize.js "+le.Text()+" "+patharr[len(patharr)-1]+".png", "Set the args. (separated by spaces)")
+						var argArray []string
+						if *args != "" {
+							argArray = strings.Split(*args, " ")
+						} else {
+							argArray = make([]string, 0)
+						}
+
+						flag.Parse()
+						cmd := exec.Command(*command, argArray...)
+
+						buf, err := cmd.Output()
+						if err != nil {
+							fmt.Fprintf(os.Stderr, "The command failed to perform: %s (Command: %s, Arguments: %s)", err, *command, *args)
+							return
+						}
+						fmt.Fprintf(os.Stdout, "Result: %s", buf)
+
 					}
-
-					flag.Parse()
-					cmd := exec.Command(*command, argArray...)
-
-					buf, err := cmd.Output()
-					if err != nil {
-						fmt.Fprintf(os.Stderr, "The command failed to perform: %s (Command: %s, Arguments: %s)", err, *command, *args)
-						return
-					}
-					fmt.Fprintf(os.Stdout, "Result: %s", buf)
-
 					getTemplate(le.Text(), le2.Text())
 				},
 			},
