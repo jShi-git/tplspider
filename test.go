@@ -24,12 +24,23 @@ func main() {
 	var le, le2 *walk.LineEdit
 	var lb1, lb2 *walk.Label
 	var ck1 *walk.CheckBox
+	var mw *walk.MainWindow
+
 	copytext, _ := walk.Clipboard().Text()
 
-	MainWindow{
-		Title:   "模板下载器",
-		MinSize: Size{400, 100},
-		Layout:  VBox{},
+	updateIcon := func() {
+		mainIcon, err := walk.NewIconFromResource("101")
+		if err != nil {
+			// do some work
+		}
+		mw.SetIcon(mainIcon)
+	}
+
+	if err := (MainWindow{
+		AssignTo: &mw,
+		Title:    "模板下载器",
+		MinSize:  Size{400, 100},
+		Layout:   VBox{},
 		Children: []Widget{
 			CheckBox{
 				AssignTo: &ck1,
@@ -83,5 +94,9 @@ func main() {
 				},
 			},
 		},
-	}.Run()
+	}.Create()); err != nil {
+		fmt.Println(err)
+	}
+	updateIcon()
+	mw.Run()
 }
