@@ -70,8 +70,9 @@ func main() {
 					fmt.Println(ck1.Checked())
 					if ck1.Checked() {
 						command := flag.String("cmd", "phantomjs", "Set the command.")
-						patharr := strings.Split(le2.Text(), "\\\\")
-						args := flag.String("args", "rasterize.js "+le.Text()+" "+patharr[len(patharr)-1]+".png", "Set the args. (separated by spaces)")
+						patharr := strings.Split(le2.Text(), "\\")
+
+						args := flag.String("args", "rasterize.js "+le.Text()+" "+le2.Text()+"\\"+patharr[len(patharr)-1]+".png", "Set the args. (separated by spaces)")
 						var argArray []string
 						if *args != "" {
 							argArray = strings.Split(*args, " ")
